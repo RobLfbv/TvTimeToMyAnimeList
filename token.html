@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1" />
+
+	<title>Token</title>
+</head>
+<body>
+    <h1>Récupérer votre code</h1>
+    <script>const queryString = window.location.search;
+        const urlParams = new URLSearchParams(queryString);
+        const code = urlParams.get('code');
+        let public_api_key;
+		let private_api_key;
+		let code_challenge;
+        let token;
+		fetch('../api_id.json')
+			.then(response => response.json())
+			.then(data => {
+				public_api_key = data.PUBLIC_API_KEY;
+				private_api_key = data.PRIVATE_API_KEY;
+				code_challenge = data.CODE_CHALLENGE;
+			}).then( () =>{ let formdata = "";
+                formdata += `client_id=${public_api_key}&`;
+                formdata += `client_secret=${private_api_key}&`;
+                formdata += `code=${code}&`;
+                formdata += `code_verifier=${code_challenge}&`;
+                formdata += `grant_type=authorization_code`;
+                fetch("http://localhost:8080/https://myanimelist.net/v1/oauth2/token",{
+                method:"POST",
+                headers: {
+                'Content-Type': 'application/x-www-form-urlencoded',
+			},
+			body: formdata,
+        }).then(response =>response.json()).then(data => token=data.access_token).then(()=> document.querySelector("body").innerHTML+=token)});
+       
+        </script>
+    <a href="./Adding">Retourner à la page de base</a>
+</body>
+</html>
